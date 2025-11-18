@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Libreria.LogicaAplicacion.Dtos.TipoGasto.TipoGastoDtoListado>
+@if (ViewBag.Mensaje != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @ViewBag.Mensaje
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-black mb-0"><i class="bi bi-people"></i> Lista de tipos de gasto</h2>
+        <a asp-action="Create" class="btn btn-dark">
+            <i class="bi bi-plus-circle"></i> Nuevo tipo de gasto
+        </a>
+    </div>
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert alert-success mt-3">
+            @ViewBag.Message
+        </div>
+    }
+    <table class="table table-bordered table-hover align-middle bg-white">
+        <thead class="table-light">
+            <tr>
+                <th class="text-center">Nombre</th>
+                <th>Descripcion</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tipoGasto in Model)
+            {
+                <tr>
+                    <td>@tipoGasto.Nombre</td>
+                    <td>@tipoGasto.Descripcion</td>
+                    <td class="text-center">
+                        <a asp-action="Edit" asp-route-id="@tipoGasto.Id" class="btn btn-sm btn-outline-primary me-1">
+                            <i class="bi bi-pencil"></i> Editar
+                        </a>
+                        <a asp-action="Details" asp-route-id="@tipoGasto.Id" class="btn btn-sm btn-outline-info me-1">
+                            <i class="bi bi-eye"></i> Ver
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@tipoGasto.Id" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

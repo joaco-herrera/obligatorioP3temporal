@@ -1,0 +1,140 @@
+﻿@model Libreria.WebApp.Models.PagoCreateViewModel
+@{
+    ViewData["Title"] = "Registrar Pago";
+}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Registrar Nuevo Pago</h3>
+                </div>
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <label asp-for="TipoPago" class="form-label"></label>
+                            <select asp-for="TipoPago" class="form-select" id="tipoPagoSelect" required>
+                                <option value="">-- Seleccione el tipo de pago --</option>
+                                <option value="Unico">Pago Único</option>
+                                <option value="Recurrente">Pago Recurrente</option>
+                            </select>
+                            <span asp-validation-for="TipoPago" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Descripcion" class="form-label"></label>
+                            <textarea asp-for="Descripcion" class="form-control" rows="3" required></textarea>
+                            <span asp-validation-for="Descripcion" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Monto" class="form-label"></label>
+                            <input asp-for="Monto" type="number" step="0.01" class="form-control" required />
+                            <span asp-validation-for="Monto" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="MetodoPagoId" class="form-label"></label>
+                            <select asp-for="MetodoPagoId" asp-items="Model.MetodosPago" class="form-select" required>
+                                <option value="">-- Seleccione un método de pago --</option>
+                            </select>
+                            <span asp-validation-for="MetodoPagoId" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="TipoGastoId" class="form-label"></label>
+                            <select asp-for="TipoGastoId" asp-items="Model.TiposGasto" class="form-select" required>
+                                <option value="">-- Seleccione un tipo de gasto --</option>
+                            </select>
+                            <span asp-validation-for="TipoGastoId" class="text-danger"></span>
+                        </div>
+                        <div id="camposPagoUnico" style="display: none;">
+                            <hr />
+                            <h5 class="mb-3">Datos del Pago Único</h5>
+                            <div class="mb-3">
+                                <label asp-for="FechaPago" class="form-label"></label>
+                                <input asp-for="FechaPago" type="date" class="form-control" />
+                                <span asp-validation-for="FechaPago" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="NumeroRecibo" class="form-label"></label>
+                                <input asp-for="NumeroRecibo" type="text" class="form-control" />
+                                <span asp-validation-for="NumeroRecibo" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div id="camposPagoRecurrente" style="display: none;">
+                            <hr />
+                            <h5 class="mb-3">Datos del Pago Recurrente</h5>
+                            <div class="mb-3">
+                                <label asp-for="FechaDesde" class="form-label"></label>
+                                <input asp-for="FechaDesde" type="date" class="form-control" />
+                                <span asp-validation-for="FechaDesde" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="FechaHasta" class="form-label"></label>
+                                <input asp-for="FechaHasta" type="date" class="form-control" />
+                                <span asp-validation-for="FechaHasta" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Registrar Pago
+                            </button>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.getElementById('tipoPagoSelect').addEventListener('change', function() {
+            var tipoPago = this.value;
+            var camposUnico = document.getElementById('camposPagoUnico');
+            var camposRecurrente = document.getElementById('camposPagoRecurrente');
+            if (tipoPago === 'Unico') {
+                camposUnico.style.display = 'block';
+                camposRecurrente.style.display = 'none';
+                document.querySelector('input[name="FechaPago"]').required = true;
+                document.querySelector('input[name="NumeroRecibo"]').required = true;
+                document.querySelector('input[name="FechaDesde"]').required = false;
+                document.querySelector('input[name="FechaHasta"]').required = false;
+            }
+            else if (tipoPago === 'Recurrente') {
+                camposUnico.style.display = 'none';
+                camposRecurrente.style.display = 'block';
+                document.querySelector('input[name="FechaPago"]').required = false;
+                document.querySelector('input[name="NumeroRecibo"]').required = false;
+                document.querySelector('input[name="FechaDesde"]').required = true;
+                document.querySelector('input[name="FechaHasta"]').required = true;
+            }
+            else {
+                camposUnico.style.display = 'none';
+                camposRecurrente.style.display = 'none';
+                document.querySelector('input[name="FechaPago"]').required = false;
+                document.querySelector('input[name="NumeroRecibo"]').required = false;
+                document.querySelector('input[name="FechaDesde"]').required = false;
+                document.querySelector('input[name="FechaHasta"]').required = false;
+            }
+        });
+    </script>
+}

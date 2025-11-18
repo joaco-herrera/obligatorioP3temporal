@@ -1,0 +1,166 @@
+﻿@model Libreria.WebApp.Models.PagosFiltroViewModel
+
+@{
+    ViewData["Title"] = "Listado de Pagos";
+}
+<div class="container mt-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">
+                <i class="bi bi-calendar-month"></i> Listado de Pagos
+            </h3>
+        </div>
+        <div class="card-body">
+            <form method="get" asp-action="Index" class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <label for="mes" class="form-label">Mes</label>
+                    <select name="mes" id="mes" class="form-select">
+                        <option value="">Seleccione mes</option>
+                        <option value="1" selected="@(Model.Mes == 1)">Enero</option>
+                        <option value="2" selected="@(Model.Mes == 2)">Febrero</option>
+                        <option value="3" selected="@(Model.Mes == 3)">Marzo</option>
+                        <option value="4" selected="@(Model.Mes == 4)">Abril</option>
+                        <option value="5" selected="@(Model.Mes == 5)">Mayo</option>
+                        <option value="6" selected="@(Model.Mes == 6)">Junio</option>
+                        <option value="7" selected="@(Model.Mes == 7)">Julio</option>
+                        <option value="8" selected="@(Model.Mes == 8)">Agosto</option>
+                        <option value="9" selected="@(Model.Mes == 9)">Septiembre</option>
+                        <option value="10" selected="@(Model.Mes == 10)">Octubre</option>
+                        <option value="11" selected="@(Model.Mes == 11)">Noviembre</option>
+                        <option value="12" selected="@(Model.Mes == 12)">Diciembre</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="anio" class="form-label">Año</label>
+                    <input type="number" name="anio" id="anio" class="form-control"
+                           value="@Model.Anio" min="2000" max="2100" placeholder="Año" />
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Filtrar
+                    </button>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <a asp-action="Index" class="btn btn-secondary w-100">
+                        <i class="bi bi-arrow-clockwise"></i> Ver Todos
+                    </a>
+                </div>
+            </form>
+            <hr />
+            @if (Model.Mes.HasValue && Model.Anio.HasValue)
+            {
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    Mostrando pagos registrados
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    Mostrando <strong>todos los pagos</strong>
+                </div>
+            }
+            @if (Model.Pagos != null && Model.Pagos.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Tipo</th>
+                                <th>Descripción</th>
+                                <th>Monto</th>
+                                <th>Monto Total</th>
+                                <th>Método</th>
+                                <th>Tipo Gasto</th>
+                                <th>Usuario</th>
+                                <th>Fecha/Período</th>
+                                <th>Saldo Pendiente</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var pago in Model.Pagos)
+                            {
+                                <tr>
+                                    <td>@pago.Id</td>
+                                    <td>
+                                        @if (pago.TipoPago == "Único")
+                                        {
+                                            <span class="badge bg-success">Único</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-info">Recurrente</span>
+                                        }
+                                    </td>
+                                    <td>@pago.Descripcion</td>
+                                    <td>$@pago.Monto.ToString("N2")</td>
+                                    <td>$@pago.MontoTotal.ToString("N2")</td>
+                                    <td>@pago.MetodoPago</td>
+                                    <td>@pago.TipoGasto</td>
+                                    <td>@pago.Usuario</td>
+                                    <td>
+                                        @if (pago.TipoPago == "Único")
+                                        {
+                                            @pago.FechaPago?.ToString("dd/MM/yyyy")
+                                            <br />
+                                            <small class="text-muted">Recibo: @pago.NumeroRecibo</small>
+                                        }
+                                        else
+                                        {
+                                            <span>@pago.FechaDesde?.ToString("dd/MM/yyyy")</span>
+                                            <br />
+                                            <small class="text-muted">hasta @pago.FechaHasta?.ToString("dd/MM/yyyy")</small>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (pago.SaldoPendiente > 0)
+                                        {
+                                            <span class="badge bg-warning text-dark">$@pago.SaldoPendiente?.ToString("N2")</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">Pagado</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                @if (Model.Mes.HasValue && Model.Anio.HasValue)
+                {
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        No hay pagos registrados
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> No hay pagos registrados en el sistema.
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>

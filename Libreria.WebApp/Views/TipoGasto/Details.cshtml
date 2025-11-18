@@ -1,0 +1,32 @@
+﻿@model Libreria.LogicaAplicacion.Dtos.TipoGasto.TipoGastoDtoListado
+@{
+    ViewData["Title"] = "Detalles del tipo de gasto";
+}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg rounded-3">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0"><i class="bi bi-person-lines-fill"></i> Detalles del Usuario</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4 fw-bold">Nombre</dt>
+                        <dd class="col-sm-8">@Model.Nombre</dd>
+
+                        <dt class="col-sm-4 fw-bold">Descripcion</dt>
+                        <dd class="col-sm-8">@Model.Descripcion</dd>
+                    </dl>
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Volver
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-dark">
+                            <i class="bi bi-pencil"></i> Editar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
